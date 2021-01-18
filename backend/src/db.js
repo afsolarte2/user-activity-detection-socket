@@ -1,5 +1,6 @@
 const AWS = require('aws-sdk')
 const documentClient = new AWS.DynamoDB.DocumentClient()
+const moment = require('moment')
 
 const addConnection = (uuid, connectionId) => {
   const putParams = {
@@ -32,7 +33,7 @@ const updateConnectionAndTimestamp = (uuid, connectionId) => {
   return documentClient.update(updateParams).promise()
 }
 
-const updateTimestamp = (uuid) => {
+const updateTimestamp = uuid => {
   const updateParams = {
     TableName: process.env.USER_CONNECTION_STATUS_TABLE,
     Key: { uuid },
@@ -48,12 +49,12 @@ const updateTimestamp = (uuid) => {
   return documentClient.update(updateParams).promise()
 }
 
-const getByUuid = async (uuid) => {
+const getByUuid = async uuid => {
   const queryParameters = {
     TableName: process.env.USER_CONNECTION_STATUS_TABLE,
     KeyConditionExpression: '#uuid = :uuid',
     ExpressionAttributeNames: {
-      '#uuid': 'uuid'
+      '#uuid': 'uuid',
     },
     ExpressionAttributeValues: {
       ':uuid': uuid,
@@ -65,7 +66,7 @@ const getByUuid = async (uuid) => {
   return Items.length ? Items : null
 }
 
-const getByConnectionId = async (connectionId) => {
+const getByConnectionId = async connectionId => {
   const queryParameters = {
     TableName: process.env.USER_CONNECTION_STATUS_TABLE,
     IndexName: 'ByConnectionId',
@@ -80,7 +81,25 @@ const getByConnectionId = async (connectionId) => {
   return Items.length ? Items : null
 }
 
-const deleteByGlobalSecondayIndex = async (connectionId) => {
+const getByCron = async () => {
+  const queryParameters = {
+    TableName: process.env.USER_CONNECTION_STATUS_TABLE,
+    IndexName: 'ByTimestamp',
+    KeyConditionExpression: '#timestamp <= :timestamp',
+    ExpressionAttributeNames: { '#timestamp': 'timestamp' },
+    ExpressionAttributeValues: {
+      ':timestamp': moment().subtract(1, 'minute').toISOString(),
+    },
+  }
+
+  console.log(queryParameters)
+
+  const { Items } = await documentClient.query(queryParameters).promise()
+
+  return Items.length ? Items : null
+}
+
+const deleteByGlobalSecondayIndex = async connectionId => {
   //Sin uso
   const { Items } = await getByConnectionId(connectionId)
 
@@ -89,13 +108,15 @@ const deleteByGlobalSecondayIndex = async (connectionId) => {
   }
 }
 
-const deleteConnection = (uuid) => {
+const deleteConnection = uuid => {
   const deleteParams = {
     TableName: process.env.USER_CONNECTION_STATUS_TABLE,
     Key: {
       uuid: uuid,
     },
   }
+
+  console.log(deleteParams)
 
   return documentClient.delete(deleteParams).promise()
 }
@@ -107,5 +128,6 @@ module.exports = {
   deleteConnection,
   getByUuid,
   getByConnectionId,
+  getByCron,
   deleteByGlobalSecondayIndex,
 }

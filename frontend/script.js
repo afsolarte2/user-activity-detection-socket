@@ -36,5 +36,5 @@ const openSocketConnection = () => {
   webSocket.onmessage = evt => onMessage(evt)
   webSocket.onerror = evt => onError(evt)
 
-  window.setInterval(() => sendStillAlivePing(), 20000)
+  window.setInterval(() => sendStillAlivePing(), 50000)
 }
