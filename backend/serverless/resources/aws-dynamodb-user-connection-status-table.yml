@@ -5,16 +5,12 @@ Resources:
       AttributeDefinitions:
         - AttributeName: uuid
           AttributeType: S
-        - AttributeName: timestamp
-          AttributeType: S
         - AttributeName: connectionId
           AttributeType: S
       BillingMode: PAY_PER_REQUEST
       KeySchema:
         - AttributeName: uuid
           KeyType: HASH
-        - AttributeName: timestamp
-          KeyType: RANGE
       GlobalSecondaryIndexes:
         - IndexName: ByConnectionId
           KeySchema:

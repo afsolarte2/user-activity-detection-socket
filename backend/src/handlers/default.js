@@ -1,12 +1,12 @@
-const { updateConnection } = require('../db')
+const { updateTimestamp } = require('../db')
 
 module.exports.handler = async (event, context, callback) => {
-    const { uuid } = JSON.parse(event.requestContext.body)
+  const { uuid } = JSON.parse(event.body)
 
-    await updateConnection(uuid)
+  await updateTimestamp(uuid)
 
-    callback(null, {
-        statusCode: 200,
-        body: 'all ok'
-    })
+  callback(null, {
+    statusCode: 200,
+    body: 'all ok',
+  })
 }

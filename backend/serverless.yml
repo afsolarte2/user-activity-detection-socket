@@ -8,6 +8,7 @@ custom:
     number: 1
 
 plugins:
+  - serverless-offline
   - serverless-pseudo-parameters
   - serverless-prune-plugin
 
@@ -34,11 +35,11 @@ functions:
     events:
       - websocket:
           route: $connect
-  echo:
+  sendMessage:
     handler: src/handlers/echo.handler
     events:
       - websocket:
-          route: echo
+          route: sendMessage
   disconnect:
     handler: src/handlers/disconnect.handler
     events:

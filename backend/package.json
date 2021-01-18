@@ -9,7 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.823.0"
+    "aws-sdk": "^2.823.0",
+    "serverless-offline": "^6.8.0"
   },
   "devDependencies": {
     "serverless-prune-plugin": "^1.4.3",
