@@ -109,9 +109,10 @@ const getByCron = async () => {
   const queryParameters = {
     TableName: process.env.USER_CONNECTION_STATUS_TABLE,
     IndexName: 'ByAction',
-    KeyConditionExpression: '#action = :action and #timestamp <= :timestamp',
+    KeyConditionExpression: '#action = :action',
+    FilterExpression: '#timestamp <= :timestamp',
     ExpressionAttributeNames: {
-      '#action': ':action',
+      '#action': 'action',
       '#timestamp': 'timestamp'
     },
     ExpressionAttributeValues: {

@@ -1,6 +1,6 @@
-const uuid = 'abc-123'
-//const webSocketUrl = `wss://etllebuog9.execute-api.us-east-1.amazonaws.com/local?uuid=${uuid}`
-const webSocketUrl = `ws://localhost:3001?uuid=${uuid}`
+const uuid = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5)
+const webSocketUrl = `wss://etllebuog9.execute-api.us-east-1.amazonaws.com/local?uuid=${uuid}`
+//const webSocketUrl = `ws://localhost:3001?uuid=${uuid}`
 
 let webSocket
 
@@ -36,5 +36,5 @@ const openSocketConnection = () => {
   webSocket.onmessage = evt => onMessage(evt)
   webSocket.onerror = evt => onError(evt)
 
-  window.setInterval(() => sendStillAlivePing(), 50000)
+  window.setInterval(() => sendStillAlivePing(), 5000)
 }
