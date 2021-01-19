@@ -8,7 +8,8 @@ const addConnection = (uuid, connectionId) => {
     Item: {
       uuid,
       connectionId,
-      timeToLive: moment().add(30, 'seconds').unix(),
+      timestamp: moment().toISOString(),
+      action: 'USER_ACTIVITY'
     },
   }
 
@@ -19,13 +20,13 @@ const updateConnectionAndTimestamp = (uuid, connectionId) => {
   const updateParams = {
     TableName: process.env.USER_CONNECTION_STATUS_TABLE,
     Key: { uuid },
-    UpdateExpression: 'set #timeToLive = :timeToLive, #connectionId = :connectionId',
+    UpdateExpression: 'set #timestamp = :timestamp, #connectionId = :connectionId',
     ExpressionAttributeNames: {
-      '#timeToLive': 'timeToLive',
+      '#timestamp': 'timestamp',
       '#connectionId': 'connectionId',
     },
     ExpressionAttributeValues: {
-      ':timeToLive': moment().add(30, 'seconds').unix(),
+      ':timestamp': moment().toISOString(),
       ':connectionId': connectionId,
     },
   }
@@ -66,6 +67,27 @@ const getByUuid = async uuid => {
   return Items.length ? Items : null
 }
 
+// const getByUuid = async uuid => {
+//   const queryParameters = {
+//     TableName: process.env.USER_CONNECTION_STATUS_TABLE,
+//     KeyConditionExpression: '#uuid = :uuid',
+//     FilterExpression: 'timeToLive >= :timeToLive',
+//     ExpressionAttributeNames: {
+//       '#uuid': 'uuid',
+//     },
+//     ExpressionAttributeValues: {
+//       ':uuid': uuid,
+//       ':timeToLive': moment().subtract(30, 'seconds').unix(),
+//     },
+//   }
+//   console.log(queryParameters)
+
+//   const { Items } = await documentClient.query(queryParameters).promise()
+//   console.log(Items)
+
+//   return Items.length ? Items : null
+// }
+
 const getByConnectionId = async connectionId => {
   const queryParameters = {
     TableName: process.env.USER_CONNECTION_STATUS_TABLE,
@@ -84,15 +106,13 @@ const getByConnectionId = async connectionId => {
 const getByCron = async () => {
   const queryParameters = {
     TableName: process.env.USER_CONNECTION_STATUS_TABLE,
-    IndexName: 'ByTimestamp',
+    IndexName: 'ByAction',
     KeyConditionExpression: '#timestamp <= :timestamp',
     ExpressionAttributeNames: { '#timestamp': 'timestamp' },
     ExpressionAttributeValues: {
       ':timestamp': moment().subtract(1, 'minute').toISOString(),
     },
   }
-
-  console.log(queryParameters)
 
   const { Items } = await documentClient.query(queryParameters).promise()
 
@@ -115,8 +135,6 @@ const deleteConnection = uuid => {
       uuid: uuid,
     },
   }
-
-  console.log(deleteParams)
 
   return documentClient.delete(deleteParams).promise()
 }
