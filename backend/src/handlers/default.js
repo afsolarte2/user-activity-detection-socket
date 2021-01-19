@@ -4,7 +4,7 @@ module.exports.handler = async (event, context, callback) => {
   const { uuid } = JSON.parse(event.body)
   const connectionId = event.requestContext.connectionId
 
-  if (uuid) {
+  if (uuid && connectionId) {
     const uuidResult = await getByUuid(uuid)
 
     if (uuidResult) await updateTimestamp(uuid)
