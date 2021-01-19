@@ -58,7 +58,6 @@ const onError = evt => {
   webSocket.close()
 }
 
-//http://127.0.0.1:5500/frontend/
 const sendStillAlivePing = () => {
   webSocket.send(JSON.stringify({ uuid }))
 }
@@ -71,5 +70,5 @@ const openSocketConnection = () => {
   webSocket.onmessage = evt => onMessage(evt)
   webSocket.onerror = evt => onError(evt)
 
-  window.setInterval(() => sendStillAlivePing(), 5000)
+  window.setInterval(() => sendStillAlivePing(), 10000)
 }
