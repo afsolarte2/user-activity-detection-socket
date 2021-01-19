@@ -7,10 +7,12 @@ module.exports.handler = async (event, context, callback) => {
     const uuid = event.queryStringParameters.uuid
     const connectionId = event.requestContext.connectionId
 
-    const uuidResult = await getByUuid(uuid)
+    if(uuid && connectionId) {
+      const uuidResult = await getByUuid(uuid)
 
-    if (!uuidResult) await addConnection(uuid, connectionId)
-    else updateConnectionAndTimestamp(uuidResult[0].uuid, connectionId)
+      if (!uuidResult) await addConnection(uuid, connectionId)
+      else updateConnectionAndTimestamp(uuidResult[0].uuid, connectionId)
+    }
 
     callback(null, {
       statusCode: 200,
