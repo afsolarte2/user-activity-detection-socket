@@ -1,6 +1,6 @@
 const uuid = 'abc-123'
-const webSocketUrl = `wss://etllebuog9.execute-api.us-east-1.amazonaws.com/local?uuid=${uuid}`
-//const webSocketUrl = `ws://localhost:3001?uuid=${uuid}`
+//const webSocketUrl = `wss://etllebuog9.execute-api.us-east-1.amazonaws.com/local?uuid=${uuid}`
+const webSocketUrl = `ws://localhost:3001?uuid=${uuid}`
 
 let webSocket
 

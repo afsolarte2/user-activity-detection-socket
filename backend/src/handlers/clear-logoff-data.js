@@ -1,16 +1,22 @@
 'use strict'
 
-const { addConnection, getByUuid, updateConnectionAndTimestamp, getByCron } = require('../db')
+const { getByCron, deleteConnection } = require('../db')
 
 module.exports.handler = async (event, context, callback) => {
   try {
     console.log('****************************************************************')
     console.log(event)
-    console.log(new Date().toISOString())
     console.log('****************************************************************')
 
     const records = await getByCron()
     console.log(records)
+
+    if (records) {
+      for (const record of records) {
+        console.log(record)
+        await deleteConnection(record.uuid)
+      }
+    }
 
     callback(null, {
       statusCode: 200,
