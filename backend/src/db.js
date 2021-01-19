@@ -1,6 +1,6 @@
 const AWS = require('aws-sdk')
-const documentClient = new AWS.DynamoDB.DocumentClient()
 const moment = require('moment')
+const documentClient = new AWS.DynamoDB.DocumentClient()
 
 const addConnection = (uuid, connectionId) => {
   const putParams = {
@@ -8,7 +8,7 @@ const addConnection = (uuid, connectionId) => {
     Item: {
       uuid,
       connectionId,
-      timestamp: new Date().toISOString(),
+      timeToLive: moment().add(30, 'seconds').unix(),
     },
   }
 
@@ -19,13 +19,13 @@ const updateConnectionAndTimestamp = (uuid, connectionId) => {
   const updateParams = {
     TableName: process.env.USER_CONNECTION_STATUS_TABLE,
     Key: { uuid },
-    UpdateExpression: 'set #timestamp = :timestamp, #connectionId = :connectionId',
+    UpdateExpression: 'set #timeToLive = :timeToLive, #connectionId = :connectionId',
     ExpressionAttributeNames: {
-      '#timestamp': 'timestamp',
+      '#timeToLive': 'timeToLive',
       '#connectionId': 'connectionId',
     },
     ExpressionAttributeValues: {
-      ':timestamp': new Date().toISOString(),
+      ':timeToLive': moment().add(30, 'seconds').unix(),
       ':connectionId': connectionId,
     },
   }
@@ -37,12 +37,12 @@ const updateTimestamp = uuid => {
   const updateParams = {
     TableName: process.env.USER_CONNECTION_STATUS_TABLE,
     Key: { uuid },
-    UpdateExpression: 'set #timestamp = :timestamp',
+    UpdateExpression: 'set #timeToLive = :timeToLive',
     ExpressionAttributeNames: {
-      '#timestamp': 'timestamp',
+      '#timeToLive': 'timeToLive',
     },
     ExpressionAttributeValues: {
-      ':timestamp': new Date().toISOString(),
+      ':timeToLive': moment().add(30, 'seconds').unix(),
     },
   }
 
