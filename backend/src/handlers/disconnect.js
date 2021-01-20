@@ -1,6 +1,6 @@
 'use strict'
 
-const { getByConnectionId, updateTimestamp, deleteConnection } = require('../db')
+const { getByConnectionId, updateTimestamp } = require('../db')
 
 module.exports.handler = async (event, context, callback) => {
   try {
@@ -9,8 +9,6 @@ module.exports.handler = async (event, context, callback) => {
     const result = await getByConnectionId(connectionId)
 
     await updateTimestamp(result[0].uuid)
-
-    //await deleteConnection(result[0].uuid)
 
     callback(null, {
       statusCode: 200,
