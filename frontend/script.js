@@ -55,9 +55,19 @@ const webSocketUrl = `wss://etllebuog9.execute-api.us-east-1.amazonaws.com/local
 
 let webSocket
 
+const sendStillAlivePing = () => {
+  webSocket.send(
+    JSON.stringify({
+      uuid,
+      timestamp: Date.now()
+    })
+  )
+}
+
 const onOpen = evt => {
   console.log('onOpen', evt)
   alert('WebSocket rocks')
+  window.setInterval(() => sendStillAlivePing(), 3000)
 }
 
 const onClose = evt => {
@@ -74,10 +84,6 @@ const onError = evt => {
   webSocket.close()
 }
 
-const sendStillAlivePing = () => {
-  webSocket.send(JSON.stringify({ uuid }))
-}
-
 const openSocketConnection = () => {
   webSocket = new WebSocket(webSocketUrl)
 
@@ -85,6 +91,4 @@ const openSocketConnection = () => {
   webSocket.onclose = evt => onClose(evt)
   webSocket.onmessage = evt => onMessage(evt)
   webSocket.onerror = evt => onError(evt)
-
-  window.setInterval(() => sendStillAlivePing(), 10000)
 }
